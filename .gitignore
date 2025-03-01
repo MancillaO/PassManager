@@ -1,0 +1,5 @@
+# Ignorar archivos .class
+*.class
+
+# Ignorar .env
+.env
