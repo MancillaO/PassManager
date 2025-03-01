@@ -8,13 +8,13 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class ConexionBD {
-    private static final String MYSQL_URL = "jdbc:mysql://localhost:3306/pass_manager";
-    private static final String MYSQL_USER = "root";
-    private static final String MYSQL_PASSWORD = "";
+    private static final String POSTGRESQL_URL = EnvLoader.get("POSTGRESQL_URL");
+    private static final String POSTGRESQL_USER = EnvLoader.get("POSTGRESQL_USER");
+    private static final String POSTGRESQL_PASSWORD = EnvLoader.get("POSTGRESQL_PASSWORD");
 
-    private static final String POSTGRESQL_URL = "jdbc:postgresql://localhost:5432/pass_manager";
-    private static final String POSTGRESQL_USER = "postgres";
-    private static final String POSTGRESQL_PASSWORD = "2801";
+    private static final String MYSQL_URL = EnvLoader.get("MYSQL_URL");
+    private static final String MYSQL_USER = EnvLoader.get("MYSQL_USER");
+    private static final String MYSQL_PASSWORD = EnvLoader.get("MYSQL_PASSWORD");
 
     private String dbType;
     private Connection activeConnection;
