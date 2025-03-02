@@ -114,6 +114,7 @@ public class Menu {
                         break;
                     case 4:
                         if (!esMongoDB) {
+                            allPasswords();
                             updatePassword();
                         } else {
                             System.out.println("\nInvalid option. Please try again.\n");
@@ -226,15 +227,25 @@ public class Menu {
     private void updatePassword() {
         System.out.print("\nEnter the ID of the password to update \nOr press Enter to cancel: ");
         String idInput = scanner.nextLine().trim();
+
         if (idInput.isEmpty()) {
             System.out.println("\nUpdate canceled.");
             return;
         }
+
         int id;
         try {
             id = Integer.parseInt(idInput);
         } catch (NumberFormatException e) {
             System.out.println("\nInvalid ID format. Please enter a number.");
+            return;
+        }
+
+        List<Integer> validIds = conexion.getValidIds();
+
+        if (!validIds.contains(id)) {
+            System.out.println("\nID not found in the database!!!");
+            updatePassword();
             return;
         }
         String servicio;
@@ -265,6 +276,7 @@ public class Menu {
             System.out.println("\nError: Password cannot be empty. Please try again.\n");
         }
         conexion.updatePassword(id, servicio, username, password);
+
     }
 
     private void deletePassword() {
@@ -272,6 +284,7 @@ public class Menu {
         String option = scanner.nextLine();
 
         if (option.isEmpty()) {
+            
             System.out.println("\nOperation cancelled.");
             return;
         }
@@ -284,7 +297,7 @@ public class Menu {
             if (validIds.contains(id)) {
                 conexion.deletePassword(id);
             } else {
-                System.out.println("\nID not found in the database.");
+                System.out.println("\nID not found in the database!!!");
             }
         } catch (NumberFormatException e) {
             System.out.println("\nInvalid ID format. Please enter a number.");
