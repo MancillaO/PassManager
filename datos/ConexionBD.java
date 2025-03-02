@@ -228,19 +228,25 @@ public class ConexionBD {
 
         try (Connection conn = getConnection()) {
             try (PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM passwords WHERE servicio LIKE ?")) {
+                    "SELECT * FROM passwords WHERE servicio ILIKE ?")) {
                 stmt.setString(1, "%" + servicio + "%");
                 ResultSet rs = stmt.executeQuery();
                 boolean found = false;
+                // Definir los anchos de las columnas
+                String format = "| %-2s | %-10s | %-15s | %-22s |\n";
+
+                System.err.printf(format, "ID", "Service", "Username", "Password");
+                System.out.println("|                                                            |");
                 while (rs.next()) {
                     found = true;
-                    System.out.println("ID: " + rs.getInt("id") +
-                            ", Servicio: " + rs.getString("servicio") +
-                            ", Usuario: " + rs.getString("username") +
-                            ", Contraseña: " + rs.getString("password"));
+                    System.out.printf(format,
+                            rs.getInt("id"),
+                            rs.getString("servicio"),
+                            rs.getString("username"),
+                            rs.getString("password"));
                 }
                 if (!found) {
-                    System.out.println("No results found for '" + servicio + "' in " + dbType);
+                    System.out.println("| No passwords stored                                        |");
                 }
             }
         } catch (SQLException e) {

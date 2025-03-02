@@ -87,7 +87,7 @@ public class Menu {
                 System.out.println("|  5. Delete password                                        |");
             }
             System.out.println("|                                                            |");
-            System.out.println("|  6. Change database                                        |");
+            System.out.println("|  0. Change database                                        |");
             System.out.println("|                                                            |");
             System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.print("Select an option: ");
@@ -97,7 +97,7 @@ public class Menu {
                 opcion = Integer.parseInt(option);
                 switch (opcion) {
                     case 1:
-                        showPasswords();
+                        showPasswords(true);
                         break;
                     case 2:
                         addPassword();
@@ -124,7 +124,7 @@ public class Menu {
                             System.out.println("\nInvalid option. Please try again.\n");
                         }
                         break;
-                    case 6:
+                    case 0:
                         conexion.closeConnection();
                         String newDbType = seleccionarBaseDatos();
                         if (newDbType == null) {
@@ -157,8 +157,11 @@ public class Menu {
         System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
     }
 
-    private void showPasswords() {
-        allPasswords();
+    private void showPasswords(boolean ShowAll) {
+        if (ShowAll) {
+            allPasswords();
+
+        }
         System.out.print(
                 "Type (D) to delete a password, (U) to update a password \nOr any other key to return to the main menu: ");
         String option = scanner.nextLine();
@@ -175,7 +178,16 @@ public class Menu {
     private void searchByService() {
         System.out.print("\nEnter the service name to search: ");
         String servicio = scanner.nextLine();
+        System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        System.out.println("|                                                            |");
+        System.out.println("|                          PASSWORDS                         |");
+        System.out.println("|                                                            |");
+        System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        System.out.println("|                                                            |");
         conexion.findPasswordsByService(servicio);
+        System.out.println("|                                                            |");
+        System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        showPasswords(false);
     }
 
     private void addPassword() {
