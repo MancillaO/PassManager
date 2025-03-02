@@ -52,17 +52,40 @@ public class Menu {
     }
 
     public String[] pedirDatos() {
-        System.out.print("\nEnter the remote IP: ");
-        String ip = scanner.nextLine();
+        String ip, nombre, rolName, rolPassword;
+        while (true) {
+            System.out.print("\nEnter the remote IP: ");
+            ip = scanner.nextLine().trim();
+            if (!ip.isEmpty()) {
+                break;
+            }
+            System.out.println("Error: The remote IP cannot be empty. Please try again.");
+        }
+        while (true) {
+            System.out.print("Enter the database name: ");
+            nombre = scanner.nextLine().trim();
+            if (!nombre.isEmpty()) {
+                break;
+            }
+            System.out.println("Error: The database name cannot be empty. Please try again.");
+        }
+        while (true) {
+            System.out.print("Enter the role name: ");
+            rolName = scanner.nextLine().trim();
+            if (!rolName.isEmpty()) {
+                break;
+            }
+            System.out.println("Error: The role name cannot be empty. Please try again.");
+        }
 
-        System.out.print("Enter the database name: ");
-        String nombre = scanner.nextLine();
-
-        System.out.print("Enter the role name: ");
-        String rolName = scanner.nextLine();
-
-        System.out.print("Enter the password for the role: ");
-        String rolPassword = scanner.nextLine();
+        while (true) {
+            System.out.print("Enter the password for the role: ");
+            rolPassword = scanner.nextLine().trim();
+            if (!rolPassword.isEmpty()) {
+                break;
+            }
+            System.out.println("Error: The password cannot be empty. Please try again.");
+        }
 
         return new String[] { ip, nombre, rolName, rolPassword };
     }
