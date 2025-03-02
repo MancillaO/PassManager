@@ -10,3 +10,8 @@ CREATE TABLE passwords (
     password VARCHAR(255) NOT NULL,
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Crear usuario seguro
+CREATE USER 'manager'@'localhost' IDENTIFIED BY '123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON pass_manager.passwords TO 'manager'@'localhost';
+FLUSH PRIVILEGES;
