@@ -148,7 +148,7 @@ public class Menu {
     private void allPasswords() {
         System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
         System.out.println("|                                                            |");
-        System.out.println("|                        ALL PASSWORDS                       |");
+        System.out.println("|                          PASSWORDS                         |");
         System.out.println("|                                                            |");
         System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
         System.out.println("|                                                            |");
@@ -206,7 +206,7 @@ public class Menu {
             }
             System.out.println("\nError: Password cannot be empty. Please try again.\n");
         }
-        conexion.insertPassword(servicio.toUpperCase(), username, password);
+        conexion.insertPassword(servicio, username, password);
     }
 
     private void updatePassword() {
@@ -216,7 +216,6 @@ public class Menu {
             System.out.println("Update canceled.");
             return;
         }
-
         int id;
         try {
             id = Integer.parseInt(idInput);
