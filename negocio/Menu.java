@@ -7,6 +7,7 @@ import datos.ConexionBD;
 public class Menu {
     private Scanner scanner = new Scanner(System.in);
     private ConexionBD conexion;
+    private String[] connectionData;
 
     public void iniciar() {
         String tipoBD = seleccionarBaseDatos();
@@ -14,8 +15,30 @@ public class Menu {
             System.out.println("\nExiting the program...");
             return;
         }
+
         try {
             conexion = new ConexionBD(tipoBD);
+            System.out.print("\nDo you want to use a remote connection? (Y/N): ");
+            String respuesta = scanner.nextLine();
+            if (respuesta.equalsIgnoreCase("Y")) {
+                conexion.setRemote(true);
+                connectionData = pedirDatos();
+                conexion.setConnectionData(connectionData);
+                System.out.println("\nAttempting to establish remote connection...");
+                try {
+                    if ("mongodb".equals(tipoBD)) {
+                        conexion.getMongoCollection();
+                    } else {
+                        conexion.getConnection();
+                    }
+                    System.out.println("\nRemote connection established successfully!");
+                } catch (Exception e) {
+                    System.err.println("\nError establishing remote connection: " + e.getMessage());
+                    System.out.println("Returning to the database selection menu...");
+                    iniciar();
+                    return;
+                }
+            }
             mostrarMenuPrincipal(tipoBD);
         } catch (Exception e) {
             System.err.println("\nError initializing the connection:");
@@ -26,6 +49,22 @@ public class Menu {
             }
             scanner.close();
         }
+    }
+
+    public String[] pedirDatos() {
+        System.out.print("\nEnter the remote IP: ");
+        String ip = scanner.nextLine();
+
+        System.out.print("Enter the database name: ");
+        String nombre = scanner.nextLine();
+
+        System.out.print("Enter the role name: ");
+        String rolName = scanner.nextLine();
+
+        System.out.print("Enter the password for the role: ");
+        String rolPassword = scanner.nextLine();
+
+        return new String[] { ip, nombre, rolName, rolPassword };
     }
 
     private String seleccionarBaseDatos() {
@@ -138,6 +177,30 @@ public class Menu {
                             tipoBD = newDbType;
                             esMongoDB = "mongodb".equalsIgnoreCase(tipoBD);
                             conexion = new ConexionBD(tipoBD);
+                            System.out.print("\nDo you want to use a remote connection? (Y/N): ");
+                            String respuesta = scanner.nextLine();
+
+                            if (respuesta.equalsIgnoreCase("Y")) {
+                                conexion.setRemote(true);
+                                connectionData = pedirDatos();
+                                conexion.setConnectionData(connectionData);
+                                System.out.println("Attempting to establish remote connection...");
+                                try {
+                                    if ("mongodb".equals(tipoBD)) {
+                                        conexion.getMongoCollection();
+                                    } else {
+                                        conexion.getConnection();
+                                    }
+                                    System.out.println("Remote connection established successfully!");
+                                } catch (Exception e) {
+                                    System.err.println("Error establishing remote connection: " + e.getMessage());
+                                    System.out.println("Returning to the database selection menu...");
+                                    iniciar();
+                                    return;
+                                }
+                            } else {
+                                conexion.setRemote(false);
+                            }
                         }
                         break;
                     default:
@@ -284,7 +347,7 @@ public class Menu {
         String option = scanner.nextLine();
 
         if (option.isEmpty()) {
-            
+
             System.out.println("\nOperation cancelled.");
             return;
         }
@@ -293,7 +356,6 @@ public class Menu {
 
         try {
             int id = Integer.parseInt(option);
-
             if (validIds.contains(id)) {
                 conexion.deletePassword(id);
             } else {
