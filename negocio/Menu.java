@@ -227,7 +227,7 @@ public class Menu {
         System.out.print("\nEnter the ID of the password to update \nOr press Enter to cancel: ");
         String idInput = scanner.nextLine().trim();
         if (idInput.isEmpty()) {
-            System.out.println("Update canceled.");
+            System.out.println("\nUpdate canceled.");
             return;
         }
         int id;
@@ -239,7 +239,7 @@ public class Menu {
         }
         String servicio;
         while (true) {
-            System.out.print("Enter new service name: ");
+            System.out.print("\nEnter new service name: ");
             servicio = scanner.nextLine().trim();
             if (!servicio.isEmpty()) {
                 break;
