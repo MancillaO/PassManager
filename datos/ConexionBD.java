@@ -1,5 +1,6 @@
 package datos;
 
+import negocio.Menu;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,8 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-// Importaciones para MongoDB
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -21,6 +20,8 @@ import com.mongodb.client.model.ReturnDocument;
 import org.bson.Document;
 
 public class ConexionBD {
+    Menu menu = new Menu();
+
     private static final String POSTGRESQL_URL = EnvLoader.get("POSTGRESQL_URL");
     private static final String POSTGRESQL_USER = EnvLoader.get("POSTGRESQL_USER");
     private static final String POSTGRESQL_PASSWORD = EnvLoader.get("POSTGRESQL_PASSWORD");
@@ -37,6 +38,9 @@ public class ConexionBD {
     private Connection activeConnection;
     private MongoClient mongoClient;
 
+    private boolean remote = false;
+    private String[] connectionData; // Para almacenar los datos de conexión
+
     public ConexionBD(String dbType) {
         if (!dbType.equalsIgnoreCase("mysql") && !dbType.equalsIgnoreCase("postgresql")
                 && !dbType.equalsIgnoreCase("mongodb")) {
@@ -44,11 +48,11 @@ public class ConexionBD {
                     "Tipo de base de datos no soportado: solo se admite 'mysql', 'postgresql' o 'mongodb'");
         }
         this.dbType = dbType.toLowerCase();
-    
+
         if ("mongodb".equals(this.dbType)) {
             System.setProperty("org.mongodb.driver.logging", "OFF");
         }
-    
+
         try {
             if ("mysql".equals(this.dbType)) {
                 Class.forName("com.mysql.cj.jdbc.Driver");
@@ -61,6 +65,16 @@ public class ConexionBD {
         }
     }
 
+    // Setter para la propiedad remote
+    public void setRemote(boolean remote) {
+        this.remote = remote;
+    }
+
+    // Método para establecer los datos de conexión
+    public void setConnectionData(String[] connectionData) {
+        this.connectionData = connectionData;
+    }
+
     // Método para obtener la conexión activa o crear una nueva si es necesario
     public Connection getConnection() throws SQLException {
         if ("mongodb".equals(dbType)) {
@@ -69,9 +83,39 @@ public class ConexionBD {
 
         if (activeConnection == null || activeConnection.isClosed()) {
             if ("mysql".equals(dbType)) {
-                activeConnection = DriverManager.getConnection(MYSQL_URL, MYSQL_USER, MYSQL_PASSWORD);
+                if (remote == true) {
+                    if (connectionData == null || connectionData.length < 4) {
+                        throw new SQLException("Datos de conexión no disponibles");
+                    }
+
+                    String ip = connectionData[0];
+                    String dbName = connectionData[1];
+                    String rolName = connectionData[2];
+                    String rolPassword = connectionData[3];
+
+                    String url = "jdbc:mysql://" + ip + ":3306/" + dbName;
+                    activeConnection = DriverManager.getConnection(url, rolName, rolPassword);
+                } else {
+                    activeConnection = DriverManager.getConnection(MYSQL_URL, MYSQL_USER, MYSQL_PASSWORD);
+                }
             } else if ("postgresql".equals(dbType)) {
-                activeConnection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER, POSTGRESQL_PASSWORD);
+                if (remote == true) {
+                    if (connectionData == null || connectionData.length < 4) {
+                        throw new SQLException("Datos de conexión no disponibles");
+                    }
+
+                    String ip = connectionData[0];
+                    String dbName = connectionData[1];
+                    String rolName = connectionData[2];
+                    String rolPassword = connectionData[3];
+
+                    // Construir URL de conexión dinámica para PostgreSQL
+                    String url = "jdbc:postgresql://" + ip + ":5432/" + dbName;
+                    activeConnection = DriverManager.getConnection(url, rolName, rolPassword);
+                } else {
+                    activeConnection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER,
+                            POSTGRESQL_PASSWORD);
+                }
             } else {
                 throw new SQLException("Tipo de base de datos no válido: " + dbType);
             }
@@ -84,9 +128,28 @@ public class ConexionBD {
         if (!"mongodb".equals(dbType)) {
             throw new IllegalStateException("Este método solo se puede usar con MongoDB");
         }
+
         if (mongoClient == null) {
-            mongoClient = MongoClients.create(MONGODB_URI);
+            if (remote == true) {
+                if (connectionData == null || connectionData.length < 4) {
+                    throw new IllegalStateException("Datos de conexión no disponibles");
+                }
+
+                String ip = connectionData[0];
+                String dbName = connectionData[1];
+                String rolName = connectionData[2];
+                String rolPassword = connectionData[3];
+
+                // Construir URI de conexión dinámica para MongoDB con autenticación
+                String uri = "mongodb://" + rolName + ":" + rolPassword + "@" + ip + ":27017/" + dbName;
+                mongoClient = MongoClients.create(uri);
+                MongoDatabase database = mongoClient.getDatabase(dbName);
+                return database.getCollection("passwords");
+            } else {
+                mongoClient = MongoClients.create(MONGODB_URI);
+            }
         }
+
         MongoDatabase database = mongoClient.getDatabase(MONGODB_DATABASE);
         return database.getCollection(MONGODB_COLLECTION);
     }

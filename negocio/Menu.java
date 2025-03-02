@@ -7,6 +7,7 @@ import datos.ConexionBD;
 public class Menu {
     private Scanner scanner = new Scanner(System.in);
     private ConexionBD conexion;
+    private String[] connectionData;
 
     public void iniciar() {
         String tipoBD = seleccionarBaseDatos();
@@ -14,8 +15,30 @@ public class Menu {
             System.out.println("\nExiting the program...");
             return;
         }
+
         try {
             conexion = new ConexionBD(tipoBD);
+            System.out.print("\nDo you want to use a remote connection? (Y/N): ");
+            String respuesta = scanner.nextLine();
+            if (respuesta.equalsIgnoreCase("Y")) {
+                conexion.setRemote(true);
+                connectionData = pedirDatos();
+                conexion.setConnectionData(connectionData);
+                System.out.println("\nAttempting to establish remote connection...");
+                try {
+                    if ("mongodb".equals(tipoBD)) {
+                        conexion.getMongoCollection();
+                    } else {
+                        conexion.getConnection();
+                    }
+                    System.out.println("\nRemote connection established successfully!");
+                } catch (Exception e) {
+                    System.err.println("\nError establishing remote connection: " + e.getMessage());
+                    System.out.println("Returning to the database selection menu...");
+                    iniciar();
+                    return;
+                }
+            }
             mostrarMenuPrincipal(tipoBD);
         } catch (Exception e) {
             System.err.println("\nError initializing the connection:");
@@ -26,6 +49,22 @@ public class Menu {
             }
             scanner.close();
         }
+    }
+
+    public String[] pedirDatos() {
+        System.out.print("\nEnter the remote IP: ");
+        String ip = scanner.nextLine();
+
+        System.out.print("Enter the database name: ");
+        String nombre = scanner.nextLine();
+
+        System.out.print("Enter the role name: ");
+        String rolName = scanner.nextLine();
+
+        System.out.print("Enter the password for the role: ");
+        String rolPassword = scanner.nextLine();
+
+        return new String[] { ip, nombre, rolName, rolPassword };
     }
 
     private String seleccionarBaseDatos() {
@@ -114,6 +153,7 @@ public class Menu {
                         break;
                     case 4:
                         if (!esMongoDB) {
+                            allPasswords();
                             updatePassword();
                         } else {
                             System.out.println("\nInvalid option. Please try again.\n");
@@ -137,6 +177,30 @@ public class Menu {
                             tipoBD = newDbType;
                             esMongoDB = "mongodb".equalsIgnoreCase(tipoBD);
                             conexion = new ConexionBD(tipoBD);
+                            System.out.print("\nDo you want to use a remote connection? (Y/N): ");
+                            String respuesta = scanner.nextLine();
+
+                            if (respuesta.equalsIgnoreCase("Y")) {
+                                conexion.setRemote(true);
+                                connectionData = pedirDatos();
+                                conexion.setConnectionData(connectionData);
+                                System.out.println("Attempting to establish remote connection...");
+                                try {
+                                    if ("mongodb".equals(tipoBD)) {
+                                        conexion.getMongoCollection();
+                                    } else {
+                                        conexion.getConnection();
+                                    }
+                                    System.out.println("Remote connection established successfully!");
+                                } catch (Exception e) {
+                                    System.err.println("Error establishing remote connection: " + e.getMessage());
+                                    System.out.println("Returning to the database selection menu...");
+                                    iniciar();
+                                    return;
+                                }
+                            } else {
+                                conexion.setRemote(false);
+                            }
                         }
                         break;
                     default:
@@ -226,15 +290,25 @@ public class Menu {
     private void updatePassword() {
         System.out.print("\nEnter the ID of the password to update \nOr press Enter to cancel: ");
         String idInput = scanner.nextLine().trim();
+
         if (idInput.isEmpty()) {
             System.out.println("\nUpdate canceled.");
             return;
         }
+
         int id;
         try {
             id = Integer.parseInt(idInput);
         } catch (NumberFormatException e) {
             System.out.println("\nInvalid ID format. Please enter a number.");
+            return;
+        }
+
+        List<Integer> validIds = conexion.getValidIds();
+
+        if (!validIds.contains(id)) {
+            System.out.println("\nID not found in the database!!!");
+            updatePassword();
             return;
         }
         String servicio;
@@ -265,6 +339,7 @@ public class Menu {
             System.out.println("\nError: Password cannot be empty. Please try again.\n");
         }
         conexion.updatePassword(id, servicio, username, password);
+
     }
 
     private void deletePassword() {
@@ -272,6 +347,7 @@ public class Menu {
         String option = scanner.nextLine();
 
         if (option.isEmpty()) {
+
             System.out.println("\nOperation cancelled.");
             return;
         }
@@ -280,11 +356,10 @@ public class Menu {
 
         try {
             int id = Integer.parseInt(option);
-
             if (validIds.contains(id)) {
                 conexion.deletePassword(id);
             } else {
-                System.out.println("\nID not found in the database.");
+                System.out.println("\nID not found in the database!!!");
             }
         } catch (NumberFormatException e) {
             System.out.println("\nInvalid ID format. Please enter a number.");
