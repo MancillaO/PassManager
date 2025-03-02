@@ -1,7 +1,9 @@
 use <pass_manager>
 
-// Crear colección (no necesario en MongoDB, pero opcional)
 db.createCollection("passwords");
+
+db.createCollection("counters");
+db.counters.insertOne({ _id: "passwords", sequence_value: 0 });
 
 // Ejemplo de documento:
 // {
