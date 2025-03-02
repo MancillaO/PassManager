@@ -78,8 +78,8 @@ public class Menu {
             System.out.println("|                                                            |");
             System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.println("|                                                            |");
-            System.out.println("|  1. View all passwords                                     |");
-            System.out.println("|  2. Add new password                                       |");
+            System.out.println("|  1. Add new password                                       |");
+            System.out.println("|  2. View all passwords                                     |");
             if (!esMongoDB) {
                 System.out.println("|  3. Search password by service                             |");
                 System.out.println("|  4. Update password                                        |");
@@ -96,14 +96,14 @@ public class Menu {
                 int opcion = Integer.parseInt(option);
                 switch (opcion) {
                     case 1:
+                        addPassword();
+                        break;
+                    case 2:
                         if (esMongoDB) {
                             allPasswords();
                         } else {
                             showPasswords(true);
                         }
-                        break;
-                    case 2:
-                        addPassword();
                         break;
                     case 3:
                         if (!esMongoDB) {
