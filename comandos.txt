@@ -1,0 +1,8 @@
+-- Compilar:
+javac -cp .;.\drivers\postgresql-42.2.29.jre7.jar;drivers\mysql-connector-j-8.0.33.jar;drivers\mongodb-driver-core-5.1.2.jar;drivers\mongodb-driver-sync-5.1.2.jar;drivers\mongo-java-driver-3.11.2-javadoc.jar;drivers\bson-5.1.2.jar presentacion\Manager.java
+
+-- Ejecutar:
+java -cp .;.\drivers\postgresql-42.2.29.jre7.jar;drivers\mysql-connector-j-8.0.33.jar;drivers\mongodb-driver-core-5.1.2.jar;drivers\mongodb-driver-sync-5.1.2.jar;drivers\mongo-java-driver-3.11.2-javadoc.jar;drivers\bson-5.1.2.jar presentacion.Manager
+
+--Borrar todos los .class
+del /s *.class

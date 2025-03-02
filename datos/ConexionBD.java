@@ -25,24 +25,30 @@ public class ConexionBD {
             throw new IllegalArgumentException(
                     "Tipo de base de datos no soportado: solo se admite 'mysql' o 'postgresql'");
         }
-        this.dbType = dbType;
+        this.dbType = dbType.toLowerCase(); // Normalizar a minúsculas para evitar problemas de comparación
+
+        // Verificar que podemos cargar el driver correspondiente
+        try {
+            if ("mysql".equals(this.dbType)) {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } else if ("postgresql".equals(this.dbType)) {
+                Class.forName("org.postgresql.Driver");
+            }
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error al cargar el driver JDBC para " + this.dbType);
+            e.printStackTrace();
+        }
     }
 
     // Método para obtener la conexión activa o crear una nueva si es necesario
     public Connection getConnection() throws SQLException {
         if (activeConnection == null || activeConnection.isClosed()) {
-            try {
-                if (dbType.equalsIgnoreCase("mysql")) {
-                    Class.forName("com.mysql.cj.jdbc.Driver");
-                    activeConnection = DriverManager.getConnection(MYSQL_URL, MYSQL_USER, MYSQL_PASSWORD);
-                } else if (dbType.equalsIgnoreCase("postgresql")) {
-                    Class.forName("org.postgresql.Driver");
-                    activeConnection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER,
-                            POSTGRESQL_PASSWORD);
-                }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-                throw new SQLException("No se pudo cargar el driver JDBC para " + dbType, e);
+            if ("mysql".equals(dbType)) {
+                activeConnection = DriverManager.getConnection(MYSQL_URL, MYSQL_USER, MYSQL_PASSWORD);
+            } else if ("postgresql".equals(dbType)) {
+                activeConnection = DriverManager.getConnection(POSTGRESQL_URL, POSTGRESQL_USER, POSTGRESQL_PASSWORD);
+            } else {
+                throw new SQLException("Tipo de base de datos no válido: " + dbType);
             }
         }
         return activeConnection;
@@ -84,15 +90,20 @@ public class ConexionBD {
     // READ - Obtener todas las contraseñas
     public void getAllPasswords() {
         try (Connection conn = getConnection()) {
-            System.out.println("Contraseñas en " + dbType + ":");
+
             try (Statement stmt = conn.createStatement();
                     ResultSet rs = stmt.executeQuery("SELECT * FROM passwords")) {
+                boolean found = false;
                 while (rs.next()) {
+                    found = true;
                     System.out.println("ID: " + rs.getInt("id") +
                             ", Servicio: " + rs.getString("servicio") +
                             ", Usuario: " + rs.getString("username") +
                             ", Contraseña: " + rs.getString("password") +
                             ", Fecha: " + rs.getTimestamp("creation_date"));
+                }
+                if (!found) {
+                    System.out.println("No hay contraseñas almacenadas en " + dbType);
                 }
             }
         } catch (SQLException e) {
