@@ -69,10 +69,9 @@ public class Menu {
     }
 
     private void mostrarMenuPrincipal(String tipoBD) {
-        int opcion = 0;
         boolean esMongoDB = "mongodb".equalsIgnoreCase(tipoBD);
 
-        while (opcion != 7) {
+        while (true) {
             System.out.println("\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.println("|                                                            |");
             System.out.println("|                      PASSWORD MANAGER                      |");
@@ -94,10 +93,14 @@ public class Menu {
             String option = scanner.nextLine();
 
             try {
-                opcion = Integer.parseInt(option);
+                int opcion = Integer.parseInt(option);
                 switch (opcion) {
                     case 1:
-                        showPasswords(true);
+                        if (esMongoDB) {
+                            allPasswords();
+                        } else {
+                            showPasswords(true);
+                        }
                         break;
                     case 2:
                         addPassword();
@@ -160,7 +163,6 @@ public class Menu {
     private void showPasswords(boolean ShowAll) {
         if (ShowAll) {
             allPasswords();
-
         }
         System.out.print(
                 "Type (D) to delete a password, (U) to update a password \nOr any other key to return to the main menu: ");
