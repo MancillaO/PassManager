@@ -16,6 +16,8 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.FindOneAndUpdateOptions;
+import com.mongodb.client.model.ReturnDocument;
 import org.bson.Document;
 
 public class ConexionBD {
@@ -42,13 +44,17 @@ public class ConexionBD {
                     "Tipo de base de datos no soportado: solo se admite 'mysql', 'postgresql' o 'mongodb'");
         }
         this.dbType = dbType.toLowerCase();
+    
+        if ("mongodb".equals(this.dbType)) {
+            System.setProperty("org.mongodb.driver.logging", "OFF");
+        }
+    
         try {
             if ("mysql".equals(this.dbType)) {
                 Class.forName("com.mysql.cj.jdbc.Driver");
             } else if ("postgresql".equals(this.dbType)) {
                 Class.forName("org.postgresql.Driver");
             }
-            // MongoDB no requiere cargar un driver JDBC
         } catch (ClassNotFoundException e) {
             System.err.println("\nError al cargar el driver JDBC para " + this.dbType);
             e.printStackTrace();
@@ -78,11 +84,9 @@ public class ConexionBD {
         if (!"mongodb".equals(dbType)) {
             throw new IllegalStateException("Este método solo se puede usar con MongoDB");
         }
-
         if (mongoClient == null) {
             mongoClient = MongoClients.create(MONGODB_URI);
         }
-
         MongoDatabase database = mongoClient.getDatabase(MONGODB_DATABASE);
         return database.getCollection(MONGODB_COLLECTION);
     }
@@ -134,17 +138,36 @@ public class ConexionBD {
     }
 
     // CREATE para MongoDB - Insertar nueva contraseña
+    private int getNextSequenceValue(String sequenceName) {
+        MongoDatabase database = mongoClient.getDatabase(MONGODB_DATABASE);
+        MongoCollection<Document> counters = database.getCollection("counters");
+
+        Document query = new Document("_id", sequenceName);
+        Document update = new Document("$inc", new Document("sequence_value", 1));
+        FindOneAndUpdateOptions options = new FindOneAndUpdateOptions()
+                .upsert(true)
+                .returnDocument(ReturnDocument.AFTER);
+
+        Document result = counters.findOneAndUpdate(query, update, options);
+        return result.getInteger("sequence_value", 1); // Valor inicial 1 si no existe
+    }
+
+    // Modifica el método insertPasswordMongo
     private void insertPasswordMongo(String servicio, String username, String password) {
         try {
             MongoCollection<Document> collection = getMongoCollection();
 
-            Document doc = new Document("servicio", servicio)
+            // Obtener el siguiente ID secuencial
+            int nextId = getNextSequenceValue("passwords");
+
+            Document doc = new Document("_id", nextId) // Usar el ID secuencial
+                    .append("servicio", servicio)
                     .append("username", username)
                     .append("password", password)
                     .append("creation_date", new Date());
 
             collection.insertOne(doc);
-            System.out.println("\nPassword inserted successfully into MongoDB");
+            System.out.println("\nPassword inserted successfully into MongoDB with ID: " + nextId);
         } catch (Exception e) {
             System.err.println("\nError inserting into MongoDB:");
             e.printStackTrace();
@@ -192,27 +215,23 @@ public class ConexionBD {
             FindIterable<Document> documents = collection.find();
 
             boolean found = false;
-
-            // Definir formato con anchos fijos para cada columna
             String format = "| %-2s | %-10s | %-15s | %-22s |\n";
 
-            // Imprimir encabezado
             System.err.printf(format, "ID", "Service", "Username", "Password");
             System.out.println("|                                                            |");
 
             for (Document doc : documents) {
                 found = true;
                 System.out.printf(format,
-                        doc.getObjectId("_id").toString().substring(0, 8),
+                        doc.getInteger("_id"),
                         doc.getString("servicio"),
                         doc.getString("username"),
                         doc.getString("password"));
             }
 
             if (!found) {
-                System.out.println("| No passwords stored                                        |");
+                System.out.println("| No passwords stored                                         |");
             }
-
         } catch (Exception e) {
             System.out.println("| Error querying in MongoDB |");
             e.printStackTrace();
