@@ -12,29 +12,29 @@ public class Menu {
     public void iniciar() {
         String tipoBD = seleccionarBaseDatos();
         if (tipoBD == null) {
-            System.out.println("\nExiting the program...");
+            System.out.println("\nSaliendo del programa...");
             return;
         }
 
         try {
             conexion = new ConexionBD(tipoBD);
-            System.out.print("\nDo you want to use a remote connection? (Y/N): ");
+            System.out.print("\n¿Desea usar una conexión remota? (S/N): ");
             String respuesta = scanner.nextLine();
-            if (respuesta.equalsIgnoreCase("Y")) {
+            if (respuesta.equalsIgnoreCase("S")) {
                 conexion.setRemote(true);
                 connectionData = pedirDatos();
                 conexion.setConnectionData(connectionData);
-                System.out.println("\nAttempting to establish remote connection...");
+                System.out.println("\nIntentando establecer conexión remota...");
                 try {
                     if ("mongodb".equals(tipoBD)) {
                         conexion.getMongoCollection();
                     } else {
                         conexion.getConnection();
                     }
-                    System.out.println("\nRemote connection established successfully!");
+                    System.out.println("\n¡Conexión remota establecida con éxito!");
                 } catch (Exception e) {
-                    System.err.println("\nError establishing remote connection: " + e.getMessage());
-                    System.out.println("Returning to the database selection menu...");
+                    System.err.println("\nError al establecer la conexión remota: " + e.getMessage());
+                    System.out.println("Regresando al menú de selección de base de datos...");
                     iniciar();
                     return;
                 }
@@ -42,7 +42,7 @@ public class Menu {
             passwordManager = new PasswordManager(conexion, scanner);
             passwordManager.mostrarMenuPrincipal(tipoBD, this);
         } catch (Exception e) {
-            System.err.println("\nError initializing the connection:");
+            System.err.println("\nError al iniciar la conexión:");
             e.printStackTrace();
         } finally {
             if (conexion != null) {
@@ -55,59 +55,69 @@ public class Menu {
     public String[] pedirDatos() {
         String ip, nombre, rolName, rolPassword;
         while (true) {
-            System.out.print("\nEnter the remote IP: ");
+            System.out.print("\nIngrese la IP remota: ");
             ip = scanner.nextLine().trim();
             if (!ip.isEmpty()) {
                 break;
             }
-            System.out.println("Error: The remote IP cannot be empty. Please try again.");
+            System.out.println("Error: La IP remota no puede estar vacía. Intente de nuevo.");
         }
         while (true) {
-            System.out.print("Enter the database name: ");
+            System.out.print("Ingrese el nombre de la base de datos: ");
             nombre = scanner.nextLine().trim();
             if (!nombre.isEmpty()) {
                 break;
             }
-            System.out.println("Error: The database name cannot be empty. Please try again.");
+            System.out.println("Error: El nombre de la base de datos no puede estar vacío. Intente de nuevo.");
         }
         while (true) {
-            System.out.print("Enter the role name: ");
+            System.out.print("Ingrese el nombre del rol: ");
             rolName = scanner.nextLine().trim();
             if (!rolName.isEmpty()) {
                 break;
             }
-            System.out.println("Error: The role name cannot be empty. Please try again.");
+            System.out.println("Error: El nombre del rol no puede estar vacío. Intente de nuevo.");
         }
 
         while (true) {
-            System.out.print("Enter the password for the role: ");
+            System.out.print("Ingrese la contraseña del rol: ");
             rolPassword = scanner.nextLine().trim();
             if (!rolPassword.isEmpty()) {
                 break;
             }
-            System.out.println("Error: The password cannot be empty. Please try again.");
+            System.out.println("Error: La contraseña no puede estar vacía. Intente de nuevo.");
         }
         return new String[] { ip, nombre, rolName, rolPassword };
     }
 
     private String seleccionarBaseDatos() {
         while (true) {
-            System.out.println("\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
-            System.out.println("|                                                            |");
-            System.out.println("|                           WELCOME!                         |");
-            System.out.println("|                      PASSWORD MANAGER                      |");
-            System.out.println("|                                                            |");
-            System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
-            System.out.println("|                                                            |");
-            System.out.println("|  Select the database you want to connect to:               |");
-            System.out.println("|                                                            |");
-            System.out.println("|  1. PostgreSQL                                             |");
-            System.out.println("|  2. MySQL                                                  |");
-            System.out.println("|  3. MongoDB                                                |");
-            System.out.println("|  4. Exit                                                   |");
-            System.out.println("|                                                            |");
-            System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
-            System.out.print("Select an option: ");
+            System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|"));
+            System.out.println(centrarTexto("|                                             |"));
+            System.out.println(centrarTexto("|              BIENVENIDO                     |"));
+            System.out.println(centrarTexto("|            AROMA Y CAFE                     |"));
+            System.out.println(centrarTexto("|        UN CAFE, MIL MOMENTOS                |"));
+            System.out.println(centrarTexto("|                                             |"));            
+            System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|"));
+            System.out.println();
+            System.out.println(centrarTexto("      ( (        "));
+            System.out.println(centrarTexto("       ) )       "));
+            System.out.println(centrarTexto("    ........     "));
+            System.out.println(centrarTexto("    |      |]    "));
+            System.out.println(centrarTexto("    |      |     "));
+            System.out.println(centrarTexto("    |......|     "));
+            System.out.println();
+            System.out.println(centrarTexto("|                                             |"));
+            System.out.println(centrarTexto("|                                             |"));
+            System.out.println(centrarTexto("| Seleccione la base de datos a conectar:     |"));
+            System.out.println(centrarTexto("|                                             |"));
+            System.out.println(centrarTexto("| 1. PostgreSQL                               |"));
+            System.out.println(centrarTexto("| 2. MySQL                                    |"));
+            System.out.println(centrarTexto("| 3. MongoDB                                  |"));
+            System.out.println(centrarTexto("| 4. Salir                                    |"));
+            System.out.println(centrarTexto("|                                             |"));
+            System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|"));
+            System.out.print(centrarTexto("Seleccione una opción: "));
             String option = scanner.nextLine();
 
             try {
@@ -122,11 +132,18 @@ public class Menu {
                     case 4:
                         return null;
                     default:
-                        System.out.println("\nInvalid option. Please try again.\n");
+                        System.out.println(centrarTexto("Opción no válida. Intente de nuevo."));
                 }
             } catch (NumberFormatException e) {
-                System.out.println("\nInvalid input. Please enter a number.");
+                System.out.println(centrarTexto("Entrada no válida. Ingrese un número."));
             }
         }
+    }
+
+    private String centrarTexto(String texto) {
+        int ancho = 80; 
+        int espacios = (ancho - texto.length()) / 2;
+        String padding = " ".repeat(Math.max(0, espacios));
+        return padding + texto + padding;
     }
 }

@@ -13,15 +13,25 @@ public class PasswordManager {
         this.scanner = scanner;
     }
 
+    private String centrarTexto(String texto, int ancho) {
+        int espaciosTotales = ancho - texto.length();
+        int espaciosIzquierda = espaciosTotales / 2;
+        int espaciosDerecha = espaciosTotales - espaciosIzquierda;
+        String paddingIzquierda = " ".repeat(espaciosIzquierda);
+        String paddingDerecha = " ".repeat(espaciosDerecha);
+        return paddingIzquierda + texto + paddingDerecha;
+    }
+
     public void mostrarMenuPrincipal(String tipoBD, Menu menuPrincipal) {
         boolean esMongoDB = "mongodb".equalsIgnoreCase(tipoBD);
+        int ancho = 80;
 
         while (true) {
-            System.out.println("\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+            System.out.println("\n" + centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
             System.out.println("|                                                            |");
-            System.out.println("|                      PASSWORD MANAGER                      |");
+            System.out.println("|" + centrarTexto("                      PASSWORD MANAGER                      ", ancho) + "|");
             System.out.println("|                                                            |");
-            System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+            System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
             System.out.println("|                                                            |");
             System.out.println("|  1. Add new password                                       |");
             System.out.println("|  2. View all passwords                                     |");
@@ -33,7 +43,7 @@ public class PasswordManager {
             System.out.println("|                                                            |");
             System.out.println("|  0. Change database                                        |");
             System.out.println("|                                                            |");
-            System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+            System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
             System.out.print("Select an option: ");
             String option = scanner.nextLine();
 
@@ -87,15 +97,16 @@ public class PasswordManager {
     }
 
     private void allPasswords() {
-        System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        int ancho = 80;
+        System.out.println("\n\n" + centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
         System.out.println("|                                                            |");
-        System.out.println("|                          PASSWORDS                         |");
+        System.out.println("|" + centrarTexto("                          PASSWORDS                         ", ancho) + "|");
         System.out.println("|                                                            |");
-        System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
         System.out.println("|                                                            |");
         conexion.getAllPasswords();
         System.out.println("|                                                            |");
-        System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
     }
 
     private void showPasswords(boolean ShowAll) {
@@ -116,17 +127,18 @@ public class PasswordManager {
     }
 
     private void searchByService() {
+        int ancho = 80;
         System.out.print("\nEnter the service name to search: ");
         String servicio = scanner.nextLine();
-        System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        System.out.println("\n\n" + centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
         System.out.println("|                                                            |");
-        System.out.println("|                          PASSWORDS                         |");
+        System.out.println("|" + centrarTexto("                          PASSWORDS                         ", ancho) + "|");
         System.out.println("|                                                            |");
-        System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
         System.out.println("|                                                            |");
         conexion.findPasswordsByService(servicio);
         System.out.println("|                                                            |");
-        System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
         showPasswords(false);
     }
 
