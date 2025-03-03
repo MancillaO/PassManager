@@ -94,21 +94,10 @@ public class Menu {
         while (true) {
             System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|"));
             System.out.println(centrarTexto("|                                             |"));
-            System.out.println(centrarTexto("|              BIENVENIDO                     |"));
-            System.out.println(centrarTexto("|            AROMA Y CAFE                     |"));
-            System.out.println(centrarTexto("|        UN CAFE, MIL MOMENTOS                |"));
+            System.out.println(centrarTexto("|                  BIENVENIDO                 |"));
             System.out.println(centrarTexto("|                                             |"));            
             System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|"));
             System.out.println();
-            System.out.println(centrarTexto("      ( (        "));
-            System.out.println(centrarTexto("       ) )       "));
-            System.out.println(centrarTexto("    ........     "));
-            System.out.println(centrarTexto("    |      |]    "));
-            System.out.println(centrarTexto("    |      |     "));
-            System.out.println(centrarTexto("    |......|     "));
-            System.out.println();
-            System.out.println(centrarTexto("|                                             |"));
-            System.out.println(centrarTexto("|                                             |"));
             System.out.println(centrarTexto("| Seleccione la base de datos a conectar:     |"));
             System.out.println(centrarTexto("|                                             |"));
             System.out.println(centrarTexto("| 1. PostgreSQL                               |"));
