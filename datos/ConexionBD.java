@@ -292,9 +292,9 @@ public class ConexionBD {
             FindIterable<Document> documents = collection.find();
 
             boolean found = false;
-            String format = YELLOW + "| %-2s | %-10s | %-15s | %-22s |" + RESET + "\n";
+            String format = "| %-2s | %-10s | %-15s | %-22s |\n";
 
-            System.err.printf(format, "ID", "Service", "Username", "Password");
+            System.err.printf(YELLOW + "| " + RESET + format + YELLOW + " |" + RESET + "\n", "ID", "Service", "Username", "Password");
             System.out.println(YELLOW + "|" + RESET + "                                                            " + YELLOW + "|" + RESET);
 
             for (Document doc : documents) {
@@ -330,10 +330,10 @@ public class ConexionBD {
                 ResultSet rs = stmt.executeQuery();
                 boolean found = false;
                 // Definir los anchos de las columnas
-                String format = YELLOW + "| %-2s | %-10s | %-15s | %-22s |" + RESET + "\n";
+                String format = "| %-2s | %-10s | %-15s | %-22s |\n";
 
-                System.err.printf(format, "ID", "Service", "Username", "Password");
-                System.out.println("|                                                            |");
+                System.err.printf(YELLOW + "| " + RESET + format + YELLOW + " |" + RESET + "\n", "ID", "Service", "Username", "Password");
+                System.out.println(YELLOW + "|" + RESET + "                                                            " + YELLOW + "|" + RESET);
                 while (rs.next()) {
                     found = true;
                     System.out.printf(format,
