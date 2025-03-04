@@ -299,12 +299,22 @@ public class ConexionBD {
             FindIterable<Document> documents = collection.find();
 
             boolean found = false;
-            String format = "| %-2s | %-10s | %-15s | %-22s |\n";
 
+            // Formato con colores solo en los separadores |
+            String format = YELLOW + "|" + RESET +
+                    " %-2s " + YELLOW + "|" + RESET +
+                    " %-10s " + YELLOW + "|" + RESET +
+                    " %-15s " + YELLOW + "|" + RESET +
+                    " %-22s " + YELLOW + "|" + RESET + "%n";
+
+            // Imprimir cabecera
             System.err.printf(format, "ID", "Service", "Username", "Password");
+
+            // Línea separadora
             System.out.println(YELLOW + "|" + RESET + "                                                            "
                     + YELLOW + "|" + RESET);
 
+            // Iterar sobre los documentos y mostrarlos
             for (Document doc : documents) {
                 found = true;
                 System.out.printf(format,
@@ -314,14 +324,15 @@ public class ConexionBD {
                         doc.getString("password"));
             }
 
+            // Mensaje si no se encontraron contraseñas
             if (!found) {
-                System.out.println(YELLOW + "|" + RESET
-                        + " No passwords stored                                         " + YELLOW + "|" + RESET);
-
+                System.out.println(YELLOW + "|" + RESET +
+                        " No passwords stored                                         " + YELLOW + "|" + RESET);
             }
         } catch (Exception e) {
-            System.out.println(YELLOW + "|" + RESET + " Error querying in MongoDB                                    "
-                    + YELLOW + "|" + RESET);
+            // Mensaje de error con separadores en amarillo
+            System.out.println(YELLOW + "|" + RESET +
+                    " Error querying in MongoDB                                    " + YELLOW + "|" + RESET);
             e.printStackTrace();
         }
     }
@@ -339,11 +350,22 @@ public class ConexionBD {
                 stmt.setString(1, "%" + servicio + "%");
                 ResultSet rs = stmt.executeQuery();
                 boolean found = false;
-                // Definir los anchos de las columnas
-                String format = "| %-2s | %-10s | %-15s | %-22s |\n";
 
-                System.err.printf(YELLOW + "| " + RESET + format + YELLOW + " |" + RESET + "\n", "ID", "Service", "Username", "Password");
-                System.out.println(YELLOW + "|" + RESET + "                                                            " + YELLOW + "|" + RESET);
+                // Formato con colores solo en los separadores |
+                String format = YELLOW + "|" + RESET +
+                        " %-2s " + YELLOW + "|" + RESET +
+                        " %-10s " + YELLOW + "|" + RESET +
+                        " %-15s " + YELLOW + "|" + RESET +
+                        " %-22s " + YELLOW + "|" + RESET + "%n";
+
+                // Imprimir cabecera
+                System.err.printf(format, "ID", "Service", "Username", "Password");
+
+                // Línea separadora
+                System.out.println(YELLOW + "|" + RESET + "                                                            "
+                        + YELLOW + "|" + RESET);
+
+                // Imprimir resultados
                 while (rs.next()) {
                     found = true;
                     System.out.printf(format,
@@ -352,13 +374,16 @@ public class ConexionBD {
                             rs.getString("username"),
                             rs.getString("password"));
                 }
+
                 if (!found) {
                     System.out.println(YELLOW + "|" + RESET
-                            + " No passwords stored                                         " + YELLOW + "|" + RESET);
+                            + " No passwords found for '" + servicio + "'                         " + YELLOW + "|"
+                            + RESET);
                 }
             }
         } catch (SQLException e) {
-            System.err.println("\nError searching by service in " + dbType + ":");
+            System.out.println(YELLOW + "|" + RESET + " Error searching by service in " + dbType + "          " + YELLOW
+                    + "|" + RESET);
             e.printStackTrace();
         }
     }
