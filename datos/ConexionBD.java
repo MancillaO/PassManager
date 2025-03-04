@@ -41,6 +41,8 @@ public class ConexionBD {
 
     private boolean remote = false;
     private String[] connectionData; // Para almacenar los datos de conexión
+    private static final String YELLOW = "\u001B[33m";
+    private static final String RESET = "\u001B[0m";
 
     public ConexionBD(String dbType) {
         if (!dbType.equalsIgnoreCase("mysql") && !dbType.equalsIgnoreCase("postgresql")
@@ -261,10 +263,10 @@ public class ConexionBD {
                 boolean found = false;
 
                 // Definir los anchos de las columnas
-                String format = "| %-2s | %-10s | %-15s | %-22s |\n";
+                String format = YELLOW + "| %-2s | %-10s | %-15s | %-22s |" + RESET + "\n";
 
                 System.err.printf(format, "ID", "Service", "Username", "Password");
-                System.out.println("|                                                            |");
+                System.out.println(YELLOW + "|" + RESET + "                                                            " + YELLOW + "|" + RESET);
                 while (rs.next()) {
                     found = true;
                     System.out.printf(format,
@@ -274,11 +276,11 @@ public class ConexionBD {
                             rs.getString("password"));
                 }
                 if (!found) {
-                    System.out.println("| No passwords stored                                        |");
+                    System.out.println(YELLOW + "|" + RESET + " No passwords stored                                        " + YELLOW + "|" + RESET);
                 }
             }
         } catch (SQLException e) {
-            System.out.println("| Error querying in " + dbType + " |");
+            System.out.println(YELLOW + "|" + RESET + " Error querying in " + dbType + "                                    " + YELLOW + "|" + RESET);
             e.printStackTrace();
         }
     }
@@ -290,10 +292,10 @@ public class ConexionBD {
             FindIterable<Document> documents = collection.find();
 
             boolean found = false;
-            String format = "| %-2s | %-10s | %-15s | %-22s |\n";
+            String format = YELLOW + "| %-2s | %-10s | %-15s | %-22s |" + RESET + "\n";
 
             System.err.printf(format, "ID", "Service", "Username", "Password");
-            System.out.println("|                                                            |");
+            System.out.println(YELLOW + "|" + RESET + "                                                            " + YELLOW + "|" + RESET);
 
             for (Document doc : documents) {
                 found = true;
@@ -305,10 +307,11 @@ public class ConexionBD {
             }
 
             if (!found) {
-                System.out.println("| No passwords stored                                         |");
+                System.out.println(YELLOW + "|" + RESET + " No passwords stored                                         " + YELLOW + "|" + RESET);
+
             }
         } catch (Exception e) {
-            System.out.println("| Error querying in MongoDB |");
+            System.out.println(YELLOW + "|" + RESET + " Error querying in MongoDB                                    " + YELLOW + "|" + RESET);
             e.printStackTrace();
         }
     }
@@ -327,7 +330,7 @@ public class ConexionBD {
                 ResultSet rs = stmt.executeQuery();
                 boolean found = false;
                 // Definir los anchos de las columnas
-                String format = "| %-2s | %-10s | %-15s | %-22s |\n";
+                String format = YELLOW + "| %-2s | %-10s | %-15s | %-22s |" + RESET + "\n";
 
                 System.err.printf(format, "ID", "Service", "Username", "Password");
                 System.out.println("|                                                            |");
@@ -340,7 +343,7 @@ public class ConexionBD {
                             rs.getString("password"));
                 }
                 if (!found) {
-                    System.out.println("| No passwords stored                                        |");
+                    System.out.println(YELLOW + "|" + RESET + " No passwords stored                                         " + YELLOW + "|" + RESET);
                 }
             }
         } catch (SQLException e) {
