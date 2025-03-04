@@ -5,6 +5,8 @@ import java.util.Scanner;
 import datos.ConexionBD;
 
 public class PasswordManager {
+    private static final String YELLOW = "\u001B[33m";
+    private static final String RESET = "\u001B[0m";
     private ConexionBD conexion;
     private Scanner scanner;
 
@@ -13,37 +15,40 @@ public class PasswordManager {
         this.scanner = scanner;
     }
 
-    private String centrarTexto(String texto, int ancho) {
-        int espaciosTotales = ancho - texto.length();
-        int espaciosIzquierda = espaciosTotales / 2;
-        int espaciosDerecha = espaciosTotales - espaciosIzquierda;
-        String paddingIzquierda = " ".repeat(espaciosIzquierda);
-        String paddingDerecha = " ".repeat(espaciosDerecha);
-        return paddingIzquierda + texto + paddingDerecha;
-    }
-
     public void mostrarMenuPrincipal(String tipoBD, Menu menuPrincipal) {
         boolean esMongoDB = "mongodb".equalsIgnoreCase(tipoBD);
-        int ancho = 80;
 
         while (true) {
-            System.out.println("\n" + centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
-            System.out.println("|                                                            |");
-            System.out.println("|" + centrarTexto("                      PASSWORD MANAGER                      ", ancho) + "|");
-            System.out.println("|                                                            |");
-            System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
-            System.out.println("|                                                            |");
-            System.out.println("|  1. Add new password                                       |");
-            System.out.println("|  2. View all passwords                                     |");
+            System.out
+                    .println("\n" + YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "                                                            "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "                      PASSWORD MANAGER                      "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "                                                            "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "                                                            "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "  1. Add new password                                       "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "  2. View all passwords                                     "
+                    + YELLOW + "|" + RESET);
             if (!esMongoDB) {
-                System.out.println("|  3. Search password by service                             |");
-                System.out.println("|  4. Update password                                        |");
-                System.out.println("|  5. Delete password                                        |");
+                System.out.println(YELLOW + "|" + RESET + "  3. Search password by service                             "
+                        + YELLOW + "|" + RESET);
+                System.out.println(YELLOW + "|" + RESET + "  4. Update password                                        "
+                        + YELLOW + "|" + RESET);
+                System.out.println(YELLOW + "|" + RESET + "  5. Delete password                                        "
+                        + YELLOW + "|" + RESET);
             }
-            System.out.println("|                                                            |");
-            System.out.println("|  0. Change database                                        |");
-            System.out.println("|                                                            |");
-            System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
+            System.out.println(YELLOW + "|" + RESET + "                                                            "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "  0. Change database                                        "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|" + RESET + "                                                            "
+                    + YELLOW + "|" + RESET);
+            System.out.println(YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
             System.out.print("Select an option: ");
             String option = scanner.nextLine();
 
@@ -97,16 +102,20 @@ public class PasswordManager {
     }
 
     private void allPasswords() {
-        int ancho = 80;
-        System.out.println("\n\n" + centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
-        System.out.println("|                                                            |");
-        System.out.println("|" + centrarTexto("                          PASSWORDS                         ", ancho) + "|");
-        System.out.println("|                                                            |");
-        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
-        System.out.println("|                                                            |");
+        System.out.println("\n\n" + YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                          PASSWORDS                         "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
         conexion.getAllPasswords();
-        System.out.println("|                                                            |");
-        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
     }
 
     private void showPasswords(boolean ShowAll) {
@@ -127,18 +136,22 @@ public class PasswordManager {
     }
 
     private void searchByService() {
-        int ancho = 80;
         System.out.print("\nEnter the service name to search: ");
         String servicio = scanner.nextLine();
-        System.out.println("\n\n" + centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
-        System.out.println("|                                                            |");
-        System.out.println("|" + centrarTexto("                          PASSWORDS                         ", ancho) + "|");
-        System.out.println("|                                                            |");
-        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
-        System.out.println("|                                                            |");
+        System.out.println("\n\n" + YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                          PASSWORDS                         "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
         conexion.findPasswordsByService(servicio);
-        System.out.println("|                                                            |");
-        System.out.println(centrarTexto("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|", ancho));
+        System.out.println(YELLOW + "|" + RESET + "                                                            "
+                + YELLOW + "|" + RESET);
+        System.out.println(YELLOW + "|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|" + RESET);
         showPasswords(false);
     }
 
