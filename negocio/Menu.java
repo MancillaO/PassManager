@@ -28,11 +28,7 @@ public class Menu {
                 conexion.setConnectionData(connectionData);
                 System.out.println("\nAttempting to establish remote connection...");
                 try {
-                    if ("mongodb".equals(tipoBD)) {
-                        conexion.getMongoCollection();
-                    } else {
-                        conexion.getConnection();
-                    }
+                    conexion.initializeConnection();
                     System.out.println("\nRemote connection established successfully!");
                 } catch (Exception e) {
                     System.err.println("\nError establishing remote connection: " + e.getMessage());
@@ -40,6 +36,8 @@ public class Menu {
                     iniciar();
                     return;
                 }
+            } else {
+                conexion.initializeConnection();
             }
             passwordManager = new PasswordManager(conexion, scanner);
             passwordManager.mostrarMenuPrincipal(tipoBD, this);

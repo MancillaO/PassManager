@@ -37,6 +37,7 @@ public class ConexionBD {
     private String dbType;
     private Connection activeConnection;
     private MongoClient mongoClient;
+    private MongoCollection<Document> mongoCollection;
 
     private boolean remote = false;
     private String[] connectionData; // Para almacenar los datos de conexión
@@ -48,10 +49,6 @@ public class ConexionBD {
                     "Tipo de base de datos no soportado: solo se admite 'mysql', 'postgresql' o 'mongodb'");
         }
         this.dbType = dbType.toLowerCase();
-
-        if ("mongodb".equals(this.dbType)) {
-            System.setProperty("org.mongodb.driver.logging", "OFF");
-        }
 
         try {
             if ("mysql".equals(this.dbType)) {
@@ -73,6 +70,14 @@ public class ConexionBD {
     // Método para establecer los datos de conexión
     public void setConnectionData(String[] connectionData) {
         this.connectionData = connectionData;
+    }
+
+    public void initializeConnection() throws SQLException {
+        if ("mongodb".equals(dbType)) {
+            getMongoCollection();
+        } else {
+            getConnection();
+        }
     }
 
     // Método para obtener la conexión activa o crear una nueva si es necesario
@@ -129,29 +134,35 @@ public class ConexionBD {
             throw new IllegalStateException("Este método solo se puede usar con MongoDB");
         }
 
-        if (mongoClient == null) {
-            if (remote == true) {
-                if (connectionData == null || connectionData.length < 4) {
-                    throw new IllegalStateException("Datos de conexión no disponibles");
+        if (mongoCollection == null) {
+            if (mongoClient == null) {
+                if (remote == true) {
+                    if (connectionData == null || connectionData.length < 4) {
+                        throw new IllegalStateException("Datos de conexión no disponibles");
+                    }
+
+                    String ip = connectionData[0];
+                    String dbName = connectionData[1];
+                    String rolName = connectionData[2];
+                    String rolPassword = connectionData[3];
+
+                    // Construir URI de conexión dinámica para MongoDB con autenticación
+                    String uri = "mongodb://" + rolName + ":" + rolPassword + "@" + ip + ":27017/" + dbName;
+                    mongoClient = MongoClients.create(uri);
+                    MongoDatabase database = mongoClient.getDatabase(dbName);
+                    mongoCollection = database.getCollection("passwords");
+                } else {
+                    mongoClient = MongoClients.create(MONGODB_URI);
+                    MongoDatabase database = mongoClient.getDatabase(MONGODB_DATABASE);
+                    mongoCollection = database.getCollection(MONGODB_COLLECTION);
                 }
-
-                String ip = connectionData[0];
-                String dbName = connectionData[1];
-                String rolName = connectionData[2];
-                String rolPassword = connectionData[3];
-
-                // Construir URI de conexión dinámica para MongoDB con autenticación
-                String uri = "mongodb://" + rolName + ":" + rolPassword + "@" + ip + ":27017/" + dbName;
-                mongoClient = MongoClients.create(uri);
-                MongoDatabase database = mongoClient.getDatabase(dbName);
-                return database.getCollection("passwords");
             } else {
-                mongoClient = MongoClients.create(MONGODB_URI);
+                MongoDatabase database = mongoClient.getDatabase(MONGODB_DATABASE);
+                mongoCollection = database.getCollection(MONGODB_COLLECTION);
             }
         }
 
-        MongoDatabase database = mongoClient.getDatabase(MONGODB_DATABASE);
-        return database.getCollection(MONGODB_COLLECTION);
+        return mongoCollection;
     }
 
     // Método para cerrar la conexión activa
@@ -160,6 +171,7 @@ public class ConexionBD {
             if (mongoClient != null) {
                 mongoClient.close();
                 mongoClient = null;
+                mongoCollection = null;
             }
             return;
         }
