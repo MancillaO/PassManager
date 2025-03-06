@@ -15,3 +15,11 @@ CREATE TABLE passwords (
 CREATE USER 'manager'@'localhost' IDENTIFIED BY '123';
 GRANT SELECT, INSERT, UPDATE, DELETE ON pass_manager.passwords TO 'manager'@'localhost';
 FLUSH PRIVILEGES;
+
+-- Usuario que me funciono
+CREATE USER 'alanmy'@'%' IDENTIFIED BY '123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON pass_manager.* TO 'alanmy'@'%';
+FLUSH PRIVILEGES;
+
+mysql -u <USUARIO_CREADO> -p -h <IP_DESTINO>
+mysql -u alanmy -p -h 192.168.56.1

@@ -19,7 +19,7 @@ public class PasswordManager {
         while (true) {
             System.out.println("\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.println("|                                                            |");
-            System.out.println("|                      PASSWORD MANAGER                      |");
+            System.out.println("|                       P A S S W O R D                      |");
             System.out.println("|                                                            |");
             System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.println("|                                                            |");
@@ -89,7 +89,7 @@ public class PasswordManager {
     private void allPasswords() {
         System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
         System.out.println("|                                                            |");
-        System.out.println("|                          PASSWORDS                         |");
+        System.out.println("|                      P A S S W O R D S                     |");
         System.out.println("|                                                            |");
         System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
         System.out.println("|                                                            |");
@@ -120,7 +120,7 @@ public class PasswordManager {
         String servicio = scanner.nextLine();
         System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
         System.out.println("|                                                            |");
-        System.out.println("|                          PASSWORDS                         |");
+        System.out.println("|                      P A S S W O R D S                     |");
         System.out.println("|                                                            |");
         System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
         System.out.println("|                                                            |");
