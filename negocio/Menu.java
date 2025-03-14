@@ -124,7 +124,7 @@ public class Menu {
                     case 0:
                         return null;
                     default:
-                    consoleUtils.clearScreen();
+                        consoleUtils.clearScreen();
                         System.out.println("\nInvalid option. Please try again.\n");
                 }
             } catch (NumberFormatException e) {
