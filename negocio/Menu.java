@@ -2,17 +2,20 @@ package negocio;
 
 import java.util.Scanner;
 import datos.ConexionBD;
+import utils.ConsoleUtils;
 
 public class Menu {
     private Scanner scanner = new Scanner(System.in);
     private ConexionBD conexion;
+    private ConsoleUtils consoleUtils = new ConsoleUtils();
     private String[] connectionData;
     private PasswordManager passwordManager;
 
     public void iniciar() {
         String tipoBD = seleccionarBaseDatos();
         if (tipoBD == null) {
-            System.out.println("\nExiting the program...");
+            consoleUtils.clearScreen();
+            System.out.println("\nThank you for using our program! Have a great day!");
             return;
         }
 
@@ -89,6 +92,7 @@ public class Menu {
     }
 
     private String seleccionarBaseDatos() {
+        consoleUtils.clearScreen();
         while (true) {
             System.out.println("\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.println("|                                                            |");
@@ -102,7 +106,7 @@ public class Menu {
             System.out.println("|  1. PostgreSQL                                             |");
             System.out.println("|  2. MySQL                                                  |");
             System.out.println("|  3. MongoDB                                                |");
-            System.out.println("|  4. Exit                                                   |");
+            System.out.println("|  0. Exit                                                   |");
             System.out.println("|                                                            |");
             System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.print("Select an option: ");
@@ -117,12 +121,14 @@ public class Menu {
                         return "mysql";
                     case 3:
                         return "mongodb";
-                    case 4:
+                    case 0:
                         return null;
                     default:
+                    consoleUtils.clearScreen();
                         System.out.println("\nInvalid option. Please try again.\n");
                 }
             } catch (NumberFormatException e) {
+                consoleUtils.clearScreen();
                 System.out.println("\nInvalid input. Please enter a number.");
             }
         }

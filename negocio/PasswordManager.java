@@ -3,9 +3,11 @@ package negocio;
 import java.util.List;
 import java.util.Scanner;
 import datos.ConexionBD;
+import utils.ConsoleUtils;
 
 public class PasswordManager {
     private ConexionBD conexion;
+    private ConsoleUtils consoleUtils = new ConsoleUtils();
     private Scanner scanner;
 
     public PasswordManager(ConexionBD conexion, Scanner scanner) {
@@ -15,9 +17,10 @@ public class PasswordManager {
 
     public void mostrarMenuPrincipal(String tipoBD, Menu menuPrincipal) {
         boolean esMongoDB = "mongodb".equalsIgnoreCase(tipoBD);
+        consoleUtils.clearScreen();
 
         while (true) {
-            System.out.println("\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+            System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
             System.out.println("|                                                            |");
             System.out.println("|                       P A S S W O R D                      |");
             System.out.println("|                                                            |");
@@ -54,22 +57,23 @@ public class PasswordManager {
                         if (!esMongoDB) {
                             searchByService();
                         } else {
+                            consoleUtils.clearScreen();
                             System.out.println("\nInvalid option. Please try again.\n");
                         }
                         break;
                     case 4:
                         if (!esMongoDB) {
-                            allPasswords();
                             updatePassword();
                         } else {
+                            consoleUtils.clearScreen();
                             System.out.println("\nInvalid option. Please try again.\n");
                         }
                         break;
                     case 5:
                         if (!esMongoDB) {
-                            allPasswords();
                             deletePassword();
                         } else {
+                            consoleUtils.clearScreen();
                             System.out.println("\nInvalid option. Please try again.\n");
                         }
                         break;
@@ -78,16 +82,19 @@ public class PasswordManager {
                         menuPrincipal.iniciar();
                         return;
                     default:
+                        consoleUtils.clearScreen();
                         System.out.println("\nInvalid option. Please try again.\n");
                 }
             } catch (NumberFormatException e) {
-                System.out.println("\nInvalid input. Please enter a number.");
+                consoleUtils.clearScreen();
+                System.out.println("\nInvalid input. Please enter a number.\n");
             }
         }
     }
 
     private void allPasswords() {
-        System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
+        consoleUtils.clearScreen();
+        System.out.println("|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
         System.out.println("|                                                            |");
         System.out.println("|                      P A S S W O R D S                     |");
         System.out.println("|                                                            |");
@@ -111,11 +118,13 @@ public class PasswordManager {
         } else if (option.equalsIgnoreCase("U")) {
             updatePassword();
         } else {
+            consoleUtils.clearScreen();
             return;
         }
     }
 
     private void searchByService() {
+        consoleUtils.clearScreen();
         System.out.print("\nEnter the service name to search: ");
         String servicio = scanner.nextLine();
         System.out.println("\n\n|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|");
@@ -131,6 +140,7 @@ public class PasswordManager {
     }
 
     private void addPassword() {
+        consoleUtils.clearScreen();
         String servicio;
         while (true) {
             System.out.print("\nEnter service name: ");
@@ -158,33 +168,45 @@ public class PasswordManager {
             }
             System.out.println("\nError: Password cannot be empty. Please try again.\n");
         }
+        consoleUtils.clearScreen();
         conexion.insertPassword(servicio, username, password);
     }
 
     private void updatePassword() {
-        System.out.print("\nEnter the ID of the password to update \nOr press Enter to cancel: ");
-        String idInput = scanner.nextLine().trim();
+        boolean validIdInput = false;
+        int id = -1;
 
-        if (idInput.isEmpty()) {
-            System.out.println("\nUpdate canceled.");
-            return;
+        while (!validIdInput) {
+            allPasswords();
+            System.out.print("\nEnter the ID of the password to update \nOr press Enter to cancel: ");
+            String idInput = scanner.nextLine().trim();
+
+            if (idInput.isEmpty()) {
+                consoleUtils.clearScreen();
+                System.out.println("\nUpdate canceled.");
+                return;
+            }
+
+            try {
+                id = Integer.parseInt(idInput);
+                List<Integer> validIds = conexion.getValidIds();
+
+                if (validIds.contains(id)) {
+                    validIdInput = true;
+                } else {
+                    consoleUtils.clearScreen();
+                    System.out.println("\nID not found in the database!!!");
+                    System.out.println("\nPress Enter to try again...");
+                    scanner.nextLine();
+                }
+            } catch (NumberFormatException e) {
+                consoleUtils.clearScreen();
+                System.out.println("\nInvalid ID format. Please enter a number.");
+                System.out.println("Press Enter to try again...");
+                scanner.nextLine();
+            }
         }
 
-        int id;
-        try {
-            id = Integer.parseInt(idInput);
-        } catch (NumberFormatException e) {
-            System.out.println("\nInvalid ID format. Please enter a number.");
-            return;
-        }
-
-        List<Integer> validIds = conexion.getValidIds();
-
-        if (!validIds.contains(id)) {
-            System.out.println("\nID not found in the database!!!");
-            updatePassword();
-            return;
-        }
         String servicio;
         while (true) {
             System.out.print("\nEnter new service name: ");
@@ -194,6 +216,7 @@ public class PasswordManager {
             }
             System.out.println("\nError: Service name cannot be empty. Please try again.\n");
         }
+
         String username;
         while (true) {
             System.out.print("Enter new username: ");
@@ -212,29 +235,43 @@ public class PasswordManager {
             }
             System.out.println("\nError: Password cannot be empty. Please try again.\n");
         }
+        consoleUtils.clearScreen();
         conexion.updatePassword(id, servicio, username, password);
     }
 
     private void deletePassword() {
-        System.out.print("\nEnter the ID of the password to delete\nOr press Enter to cancel: ");
-        String option = scanner.nextLine();
+        while (true) {
+            allPasswords();
+            System.out.print("\nEnter the ID of the password to delete\nOr press Enter to cancel: ");
+            String option = scanner.nextLine();
 
-        if (option.isEmpty()) {
-            System.out.println("\nOperation cancelled.");
-            return;
-        }
-
-        List<Integer> validIds = conexion.getValidIds();
-
-        try {
-            int id = Integer.parseInt(option);
-            if (validIds.contains(id)) {
-                conexion.deletePassword(id);
-            } else {
-                System.out.println("\nID not found in the database!!!");
+            if (option.isEmpty()) {
+                consoleUtils.clearScreen();
+                System.out.println("\nOperation cancelled.\n");
+                return;
             }
-        } catch (NumberFormatException e) {
-            System.out.println("\nInvalid ID format. Please enter a number.");
+
+            List<Integer> validIds = conexion.getValidIds();
+            try {
+                int id = Integer.parseInt(option);
+                if (validIds.contains(id)) {
+                    consoleUtils.clearScreen();
+                    conexion.deletePassword(id);
+                    return;
+                } else {
+                    consoleUtils.clearScreen();
+                    System.out.println("\nID not found in the database!!!\n");
+                    System.out.println("Press Enter to try again...");
+                    scanner.nextLine();
+                    consoleUtils.clearScreen();
+                }
+            } catch (NumberFormatException e) {
+                consoleUtils.clearScreen();
+                System.out.println("\nInvalid ID format. Please enter a number.\n");
+                System.out.println("Press Enter to try again...");
+                scanner.nextLine();
+                consoleUtils.clearScreen();
+            }
         }
     }
 }
