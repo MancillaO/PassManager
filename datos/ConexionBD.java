@@ -315,39 +315,51 @@ public class ConexionBD {
 
     // READ - Buscar contraseñas por servicio
     public void findPasswordsByService(String servicio) {
-        if ("mongodb".equals(dbType)) {
-            System.out.println("Service-based search not implemented for MongoDB");
+    if ("mongodb".equals(dbType)) {
+        System.out.println("Service-based search not implemented for MongoDB");
+        return;
+    }
+
+    try (Connection conn = getConnection()) {
+        String query;
+        // Cambiar la consulta según el tipo de base de datos
+        if ("mysql".equalsIgnoreCase(dbType)) {
+            // Para MySQL, usamos LIKE con LOWER()
+            query = "SELECT * FROM passwords WHERE LOWER(servicio) LIKE LOWER(?)";
+        } else if ("postgresql".equalsIgnoreCase(dbType)) {
+            // Para PostgreSQL, usamos ILIKE
+            query = "SELECT * FROM passwords WHERE servicio ILIKE ?";
+        } else {
+            System.out.println("Unsupported database type");
             return;
         }
 
-        try (Connection conn = getConnection()) {
-            try (PreparedStatement stmt = conn.prepareStatement(
-                    "SELECT * FROM passwords WHERE servicio ILIKE ?")) {
-                stmt.setString(1, "%" + servicio + "%");
-                ResultSet rs = stmt.executeQuery();
-                boolean found = false;
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, "%" + servicio + "%");
+            ResultSet rs = stmt.executeQuery();
+            boolean found = false;
                 // Definir los anchos de las columnas
                 String format = "| %-2s | %-10s | %-15s | %-22s |\n";
 
-                System.err.printf(format, "ID", "Service", "Username", "Password");
+            System.err.printf(format, "ID", "Service", "Username", "Password");
                 System.out.println("|                                                            |");
-                while (rs.next()) {
-                    found = true;
-                    System.out.printf(format,
-                            rs.getInt("id"),
-                            rs.getString("servicio"),
-                            rs.getString("username"),
-                            rs.getString("password"));
-                }
-                if (!found) {
-                    System.out.println("| No passwords stored                                        |");
-                }
+            while (rs.next()) {
+                found = true;
+                System.out.printf(format,
+                        rs.getInt("id"),
+                        rs.getString("servicio"),
+                        rs.getString("username"),
+                        rs.getString("password"));
             }
-        } catch (SQLException e) {
-            System.err.println("\nError searching by service in " + dbType + ":");
-            e.printStackTrace();
+            if (!found) {
+                    System.out.println("| No passwords stored                                        |");
+            }
         }
+    } catch (SQLException e) {
+            System.err.println("\nError searching by service in " + dbType + ":");
+        e.printStackTrace();
     }
+}
 
     // UPDATE - Actualizar contraseña existente
     public void updatePassword(int id, String nuevoServicio, String nuevoUsername, String nuevaPassword) {
