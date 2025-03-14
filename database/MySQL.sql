@@ -11,15 +11,7 @@ CREATE TABLE passwords (
     creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Crear usuario seguro
-CREATE USER 'manager'@'localhost' IDENTIFIED BY '123';
-GRANT SELECT, INSERT, UPDATE, DELETE ON pass_manager.passwords TO 'manager'@'localhost';
+--Crear Rol
+CREATE USER 'user'@'%' IDENTIFIED BY '123';
+GRANT SELECT, INSERT, UPDATE, DELETE ON pass_manager.* TO 'user'@'%';
 FLUSH PRIVILEGES;
-
--- Usuario que me funciono
-CREATE USER 'alanmy'@'%' IDENTIFIED BY '123';
-GRANT SELECT, INSERT, UPDATE, DELETE ON pass_manager.* TO 'alanmy'@'%';
-FLUSH PRIVILEGES;
-
-mysql -u <USUARIO_CREADO> -p -h <IP_DESTINO>
-mysql -u alanmy -p -h 192.168.56.1
